@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}TripSaathi — AI Travel Planner{% endblock %}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    :root {
+      --saffron: #FF6B35;
+      --deep: #1a1a2e;
+      --teal: #0f9b8e;
+      --gold: #f7c948;
+      --cream: #fdf6ec;
+      --card: #ffffff;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --success: #10b981;
+      --shadow: 0 4px 24px rgba(0,0,0,0.08);
+      --radius: 16px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--deep); min-height: 100vh; }
+    h1,h2,h3,h4 { font-family: 'Syne', sans-serif; }
+
+    /* NAV */
+    nav {
+      background: white;
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+    .nav-logo {
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.4rem;
+      color: var(--deep); text-decoration: none; display: flex; align-items: center; gap: 8px;
+    }
+    .nav-logo span { color: var(--saffron); }
+    .nav-links { display: flex; align-items: center; gap: 1.5rem; }
+    .nav-links a {
+      color: var(--muted); text-decoration: none; font-weight: 500; font-size: 0.9rem;
+      transition: color 0.2s; padding: 4px 0;
+    }
+    .nav-links a:hover { color: var(--saffron); }
+    .nav-links a.active { color: var(--saffron); border-bottom: 2px solid var(--saffron); }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 20px; border-radius: 10px; font-weight: 600;
+      font-size: 0.9rem; cursor: pointer; text-decoration: none;
+      border: none; transition: all 0.2s; font-family: 'DM Sans', sans-serif;
+    }
+    .btn-primary { background: var(--saffron); color: white; }
+    .btn-primary:hover { background: #e55a28; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(255,107,53,0.3); }
+    .btn-outline { background: transparent; color: var(--saffron); border: 2px solid var(--saffron); }
+    .btn-outline:hover { background: var(--saffron); color: white; }
+    .btn-teal { background: var(--teal); color: white; }
+    .btn-teal:hover { background: #0d8578; transform: translateY(-1px); }
+    .nav-user { display: flex; align-items: center; gap: 10px; }
+    .nav-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--saffron); }
+    .nav-name { font-weight: 600; font-size: 0.9rem; color: var(--deep); }
+
+    /* FLASH */
+    .flash { background: #fef3cd; border: 1px solid #ffc107; color: #856404; padding: 12px 20px; border-radius: 8px; margin: 1rem auto; max-width: 1200px; }
+
+    /* FOOTER */
+    footer { background: var(--deep); color: rgba(255,255,255,0.6); text-align: center; padding: 2rem; margin-top: 4rem; font-size: 0.85rem; }
+    footer span { color: var(--saffron); }
+
+    @media (max-width: 768px) {
+      .nav-links { gap: 1rem; }
+      .nav-links a { font-size: 0.8rem; }
+    }
+  </style>
+  {% block head %}{% endblock %}
+</head>
+<body>
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="/"><i class="fas fa-route"></i> Trip<span>Saathi</span></a>
+    <div class="nav-links">
+      <a href="/" {% if request.path == '/' %}class="active"{% endif %}>Home</a>
+      <a href="/destinations" {% if request.path == '/destinations' %}class="active"{% endif %}>Destinations</a>
+      <a href="/tips" {% if request.path == '/tips' %}class="active"{% endif %}>Travel Tips</a>
+      {% if user %}
+      <a href="/dashboard" {% if request.path == '/dashboard' %}class="active"{% endif %}>My Trips</a>
+      {% endif %}
+    </div>
+    <div class="nav-user">
+      {% if user %}
+        {% if user.picture %}<img class="nav-avatar" src="{{ user.picture }}" alt="avatar"/>{% endif %}
+        <span class="nav-name">{{ user.name.split()[0] }}</span>
+        <a href="/logout" class="btn btn-outline" style="padding:7px 14px;font-size:0.8rem;">Logout</a>
+      {% else %}
+        <a href="/plan" class="btn btn-primary"><i class="fas fa-map-marked-alt"></i> Plan Trip</a>
+       
+      {% endif %}
+    </div>
+  </div>
+</nav>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}{% for msg in messages %}<div class="flash">{{ msg }}</div>{% endfor %}{% endif %}
+{% endwith %}
+{% block content %}{% endblock %}
+<footer>
+  <p>Made with <span>♥</span> for Budget Travelers across India &nbsp;|&nbsp; TripSaathi © 2026</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}My Trips — TripSaathi{% endblock %}
+{% block head %}
+<style>
+  .dash-hero { background: linear-gradient(135deg, var(--deep), #16213e); padding: 3rem 2rem; color: white; }
+  .dash-hero h1 { font-size: 2rem; }
+  .dash-hero p { opacity: 0.7; margin-top: 0.3rem; }
+  .dash-container { max-width: 1000px; margin: 2rem auto; padding: 0 2rem 4rem; }
+  .trips-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+  .trip-card { background: white; border-radius: var(--radius); padding: 1.5rem; border: 1px solid var(--border); transition: all 0.2s; }
+  .trip-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+  .trip-dest { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 800; margin-bottom: 0.8rem; }
+  .trip-meta { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .trip-badge { background: #f3f4f6; padding: 4px 10px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; color: var(--muted); }
+  .trip-date { font-size: 0.78rem; color: var(--muted); margin-top: 0.5rem; }
+  .empty-state { text-align: center; padding: 4rem 2rem; }
+  .empty-icon { font-size: 4rem; margin-bottom: 1rem; }
+  .empty-state h3 { font-size: 1.3rem; margin-bottom: 0.5rem; }
+  .empty-state p { color: var(--muted); margin-bottom: 2rem; }
+</style>
+{% endblock %}
+{% block content %}
+<div class="dash-hero">
+  <h1>Welcome back, {{ user.name.split()[0] }}! ✈️</h1>
+  <p>Here are all your saved trips</p>
+</div>
+<div class="dash-container">
+  {% if trips %}
+  <div class="trips-grid">
+    {% for trip in trips %}
+    <div class="trip-card">
+      <div class="trip-dest">🗺️ {{ trip.destination }}</div>
+      <div class="trip-meta">
+        <span class="trip-badge"><i class="fas fa-calendar"></i> {{ trip.days }} days</span>
+        <span class="trip-badge"><i class="fas fa-rupee-sign"></i> ₹{{ "{:,}".format(trip.budget) }}</span>
+      </div>
+      <div class="trip-date"><i class="fas fa-clock"></i> Planned on {{ trip.created_at.strftime('%d %b %Y') }}</div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon">🧳</div>
+    <h3>No trips yet!</h3>
+    <p>Plan your first trip and it will appear here</p>
+    <a href="/plan" class="btn btn-primary"><i class="fas fa-magic"></i> Plan My First Trip</a>
+  </div>
+  {% endif %}
+  <div style="margin-top:2rem;text-align:center;">
+    <a href="/plan" class="btn btn-primary"><i class="fas fa-plus"></i> Plan New Trip</a>
+  </div>
+</div>
+{% endblock %}

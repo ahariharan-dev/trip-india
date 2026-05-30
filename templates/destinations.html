@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Destinations — TripSaathi{% endblock %}
+{% block head %}
+<style>
+  .dest-hero { background: linear-gradient(135deg, #0f3460, #16213e); padding: 3rem 2rem; text-align: center; color: white; }
+  .dest-hero h1 { font-size: 2.2rem; margin-bottom: 0.5rem; }
+  .dest-hero p { opacity: 0.75; }
+  .dest-container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem 4rem; }
+  .dest-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; }
+  .dest-card {
+    background: white; border-radius: var(--radius); border: 1px solid var(--border);
+    overflow: hidden; transition: all 0.2s; text-decoration: none; color: var(--deep);
+    display: block;
+  }
+  .dest-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+  .dest-banner { padding: 2rem; text-align: center; font-size: 3rem; }
+  .dest-body { padding: 1.2rem; border-top: 1px solid var(--border); }
+  .dest-name { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; margin-bottom: 0.3rem; }
+  .dest-state { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.8rem; }
+  .dest-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.8rem; }
+  .dest-tag { background: #f3f4f6; padding: 3px 8px; border-radius: 5px; font-size: 0.75rem; font-weight: 600; color: var(--muted); }
+  .dest-budget { font-size: 0.85rem; color: var(--teal); font-weight: 700; }
+  .plan-link { display: block; margin-top: 0.8rem; background: var(--saffron); color: white; text-align: center; padding: 8px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; }
+</style>
+{% endblock %}
+{% block content %}
+<div class="dest-hero">
+  <h1>🇮🇳 Explore India</h1>
+  <p>50+ handpicked budget destinations across India</p>
+</div>
+<div class="dest-container">
+  <div class="dest-grid">
+    {% for dest in destinations %}
+    <a class="dest-card" href="/plan?destination={{ dest.name }}">
+      <div class="dest-banner" style="background:linear-gradient(135deg,#fff3ed,#fde8d8);">{{ dest.emoji }}</div>
+      <div class="dest-body">
+        <div class="dest-name">{{ dest.name }}</div>
+        <div class="dest-state">{{ dest.state }}</div>
+        <div class="dest-tags"><span class="dest-tag">{{ dest.type }}</span></div>
+        <div class="dest-budget">💰 {{ dest.budget }}</div>
+        <div class="plan-link">Plan This Trip →</div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

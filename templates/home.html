@@ -1,0 +1,282 @@
+{% extends "base.html" %}
+{% block title %}TripSaathi — AI-Powered India Travel Planner{% endblock %}
+{% block head %}
+<style>
+  .hero {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    padding: 5rem 2rem 4rem; text-align: center; position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,107,53,0.15); border: 1px solid rgba(255,107,53,0.3);
+    color: #FF6B35; padding: 6px 16px; border-radius: 50px; font-size: 0.85rem;
+    font-weight: 600; margin-bottom: 1.5rem;
+  }
+  .hero h1 {
+    font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 800;
+    color: white; line-height: 1.1; margin-bottom: 1.5rem;
+  }
+  .hero h1 span { color: #FF6B35; }
+  .hero p { font-size: 1.2rem; color: rgba(255,255,255,0.7); max-width: 600px; margin: 0 auto 2.5rem; line-height: 1.7; }
+  .hero-cta { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 3rem; }
+  .hero-stats { display: flex; gap: 3rem; justify-content: center; flex-wrap: wrap; }
+  .stat { text-align: center; }
+  .stat-num { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; color: #FF6B35; }
+  .stat-label { font-size: 0.85rem; color: rgba(255,255,255,0.5); }
+
+  /* QUICK PLAN */
+  .quick-plan {
+    max-width: 800px; margin: -2rem auto 0; padding: 0 2rem;
+    position: relative; z-index: 10;
+  }
+  .quick-card {
+    background: white; border-radius: 20px; padding: 2rem;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  }
+  .quick-card h3 { font-size: 1.1rem; margin-bottom: 1.2rem; color: var(--deep); }
+  .quick-form { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-group label { font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .form-group input, .form-group select {
+    padding: 12px 14px; border: 2px solid var(--border); border-radius: 10px;
+    font-size: 0.95rem; font-family: 'DM Sans', sans-serif;
+    transition: border-color 0.2s; outline: none; color: var(--deep);
+  }
+  .form-group input:focus, .form-group select:focus { border-color: var(--saffron); }
+  .btn-generate {
+    grid-column: 1 / -1; background: var(--saffron); color: white;
+    border: none; padding: 14px; border-radius: 12px; font-size: 1rem;
+    font-weight: 700; cursor: pointer; font-family: 'Syne', sans-serif;
+    transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-generate:hover { background: #e55a28; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,107,53,0.3); }
+
+  /* FEATURES */
+  .section { padding: 5rem 2rem; max-width: 1200px; margin: 0 auto; }
+  .section-title { text-align: center; margin-bottom: 3rem; }
+  .section-title h2 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+  .section-title p { color: var(--muted); font-size: 1.05rem; }
+  .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+  .feature-card {
+    background: white; border-radius: var(--radius); padding: 1.8rem;
+    border: 1px solid var(--border); transition: all 0.3s;
+  }
+  .feature-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--saffron); }
+  .feature-icon {
+    width: 52px; height: 52px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; margin-bottom: 1rem;
+  }
+  .feature-card h3 { font-size: 1.05rem; margin-bottom: 0.5rem; }
+  .feature-card p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
+
+  /* DESTINATIONS PREVIEW */
+  .destinations-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; }
+  .dest-card {
+    background: white; border-radius: 14px; padding: 1.2rem;
+    border: 1px solid var(--border); cursor: pointer; transition: all 0.2s;
+    text-align: center; text-decoration: none; color: var(--deep);
+  }
+  .dest-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--teal); }
+  .dest-emoji { font-size: 2.2rem; margin-bottom: 0.5rem; }
+  .dest-name { font-weight: 700; font-size: 0.95rem; font-family: 'Syne', sans-serif; }
+  .dest-type { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+  .dest-budget { font-size: 0.78rem; color: var(--teal); font-weight: 600; margin-top: 4px; }
+
+  /* HOW IT WORKS */
+  .how-section { background: var(--deep); padding: 5rem 2rem; }
+  .how-inner { max-width: 1000px; margin: 0 auto; }
+  .how-section .section-title h2 { color: white; }
+  .how-section .section-title p { color: rgba(255,255,255,0.5); }
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-top: 3rem; }
+  .step { text-align: center; }
+  .step-num {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: var(--saffron); color: white; font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 1.3rem; display: flex; align-items: center;
+    justify-content: center; margin: 0 auto 1rem;
+  }
+  .step h3 { color: white; font-size: 1rem; margin-bottom: 0.5rem; }
+  .step p { color: rgba(255,255,255,0.5); font-size: 0.85rem; line-height: 1.6; }
+
+  @media (max-width: 768px) {
+    .quick-form { grid-template-columns: 1fr; }
+    .hero-stats { gap: 1.5rem; }
+  }
+</style>
+{% endblock %}
+{% block content %}
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge"><i class="fas fa-robot"></i> Powered by AI</div>
+  <h1>Plan Your Dream<br><span>India Trip</span> Instantly</h1>
+  <p>AI-powered itineraries tailored for budget backpackers. Get a complete day-by-day plan with weather, budget breakdown, and local tips — in seconds.</p>
+  <div class="hero-cta">
+    <a href="/plan" class="btn btn-primary" style="padding:14px 28px;font-size:1rem;"><i class="fas fa-magic"></i> Generate Free Itinerary</a>
+    <a href="/destinations" class="btn" style="background:rgba(255,255,255,0.1);color:white;padding:14px 28px;font-size:1rem;border:1px solid rgba(255,255,255,0.2);">
+      <i class="fas fa-map-marker-alt"></i> Explore Destinations
+    </a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">50+</div><div class="stat-label">Indian Destinations</div></div>
+    <div class="stat"><div class="stat-num">AI</div><div class="stat-label">Smart Planning</div></div>
+    <div class="stat"><div class="stat-num">₹0</div><div class="stat-label">Free to Use</div></div>
+    <div class="stat"><div class="stat-num">24/7</div><div class="stat-label">Available</div></div>
+  </div>
+</section>
+
+<!-- QUICK PLAN CARD -->
+<div class="quick-plan">
+  <div class="quick-card">
+    <h3><i class="fas fa-bolt" style="color:var(--saffron)"></i> Quick Plan — Generate in 10 seconds</h3>
+    <form class="quick-form" action="/generate" method="POST">
+      <div class="form-group full">
+        <label>Where do you want to go?</label>
+        <input type="text" name="destination" placeholder="e.g. Manali, Goa, Jaipur, Rishikesh..." required/>
+      </div>
+      <div class="form-group">
+        <label>Number of Days</label>
+        <select name="days">
+          {% for i in range(1, 15) %}<option value="{{ i }}" {% if i==3 %}selected{% endif %}>{{ i }} Day{% if i>1 %}s{% endif %}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Total Budget (₹)</label>
+        <input type="number" name="budget" value="8000" min="500" max="200000" step="500"/>
+      </div>
+      <div class="form-group">
+        <label>No. of Travelers</label>
+        <select name="travelers">
+          {% for i in range(1, 7) %}<option value="{{ i }}">{{ i }} Person{% if i>1 %}s{% endif %}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Travel Style</label>
+        <select name="travel_style">
+          <option value="adventure">🧗 Adventure</option>
+          <option value="spiritual">🙏 Spiritual</option>
+          <option value="nature">🌿 Nature</option>
+          <option value="heritage">🏛️ Heritage</option>
+          <option value="beach">🏖️ Beach</option>
+          <option value="hills">⛰️ Hills & Mountains</option>
+        </select>
+      </div>
+      <button type="submit" class="btn-generate">
+        <i class="fas fa-magic"></i> Generate My Itinerary
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<div class="section">
+  <div class="section-title">
+    <h2>Everything a Budget Traveler Needs</h2>
+    <p>Smart tools to plan, track, and enjoy your India trip</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#fff3ed;"><i class="fas fa-robot" style="color:var(--saffron)"></i></div>
+      <h3>AI Itinerary Generator</h3>
+      <p>Get a complete day-by-day plan with morning, afternoon & evening activities tailored to your budget.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#e6f9f7;"><i class="fas fa-cloud-sun" style="color:var(--teal)"></i></div>
+      <h3>Live Weather Info</h3>
+      <p>Real-time weather for your destination so you can pack smart and plan activities accordingly.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#fff8e1;"><i class="fas fa-wallet" style="color:var(--gold)"></i></div>
+      <h3>Smart Budget Planner</h3>
+      <p>AI splits your budget across stay, food, transport & activities. Know exactly where your money goes.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#f0fdf4;"><i class="fas fa-map-marked-alt" style="color:var(--success)"></i></div>
+      <h3>Interactive Map</h3>
+      <p>All your itinerary stops pinned on Google Maps. See routes and distances at a glance.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#fff3ed;"><i class="fas fa-train" style="color:var(--saffron)"></i></div>
+      <h3>Transport Tips</h3>
+      <p>Best trains, buses & local transport suggestions between cities with estimated costs.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#e6f9f7;"><i class="fas fa-utensils" style="color:var(--teal)"></i></div>
+      <h3>Local Food Guide</h3>
+      <p>Must-try street food and local restaurants for every destination. Eat well on a budget.</p>
+    </div>
+  </div>
+</div>
+
+<!-- POPULAR DESTINATIONS -->
+<div class="section" style="padding-top:0;">
+  <div class="section-title">
+    <h2>Popular Budget Destinations</h2>
+    <p>Click any destination to start planning instantly</p>
+  </div>
+  <div class="destinations-grid">
+    {% set dests = [
+      ("🏔️","Manali","Mountains"),("🏖️","Goa","Beach"),("🏰","Jaipur","Heritage"),
+      ("🌊","Rishikesh","Adventure"),("🍵","Darjeeling","Hills"),("🏛️","Hampi","Ruins"),
+      ("❄️","Spiti","Remote"),("🪔","Varanasi","Spiritual"),("☕","Coorg","Nature"),
+      ("🌿","Munnar","Tea Gardens"),("🏕️","Ladakh","Himalayan"),("🐠","Andaman","Island")
+    ] %}
+    {% for emoji, name, type in dests %}
+    <a class="dest-card" href="/plan?destination={{ name }}">
+      <div class="dest-emoji">{{ emoji }}</div>
+      <div class="dest-name">{{ name }}</div>
+      <div class="dest-type">{{ type }}</div>
+    </a>
+    {% endfor %}
+  </div>
+  <div style="text-align:center;margin-top:2rem;">
+    <a href="/destinations" class="btn btn-outline"><i class="fas fa-compass"></i> View All Destinations</a>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="how-section">
+  <div class="how-inner">
+    <div class="section-title">
+      <h2>Plan in 3 Simple Steps</h2>
+      <p>From idea to full itinerary in under 30 seconds</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Enter Your Details</h3>
+        <p>Tell us your destination, budget, number of days and travel style.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>AI Generates Plan</h3>
+        <p>Our AI creates a complete day-by-day itinerary with local tips and budget breakdown.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Travel & Explore</h3>
+        <p>Save your trip, share with friends, and explore India with confidence!</p>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:3rem;">
+      <a href="/plan" class="btn btn-primary" style="padding:14px 32px;font-size:1rem;"><i class="fas fa-magic"></i> Start Planning Free</a>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Pre-fill destination from URL param
+  const urlParams = new URLSearchParams(window.location.search);
+  const dest = urlParams.get('destination');
+  if (dest) {
+    const input = document.querySelector('input[name="destination"]');
+    if (input) input.value = dest;
+  }
+</script>
+{% endblock %}

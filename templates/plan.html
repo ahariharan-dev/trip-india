@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block title %}Plan Your Trip — TripSaathi{% endblock %}
+{% block head %}
+<style>
+  .plan-hero { background: linear-gradient(135deg, var(--saffron), #e55a28); padding: 3rem 2rem; text-align: center; }
+  .plan-hero h1 { color: white; font-size: 2.2rem; margin-bottom: 0.5rem; }
+  .plan-hero p { color: rgba(255,255,255,0.85); font-size: 1.05rem; }
+  .plan-container { max-width: 760px; margin: 2rem auto; padding: 0 2rem 4rem; }
+  .plan-card { background: white; border-radius: 20px; padding: 2.5rem; box-shadow: var(--shadow); border: 1px solid var(--border); }
+  .form-section { margin-bottom: 2rem; }
+  .form-section-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--saffron); margin-bottom: 1rem; display: flex; align-items: center; gap: 6px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+  .form-row.three { grid-template-columns: 1fr 1fr 1fr; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group label { font-size: 0.82rem; font-weight: 600; color: var(--muted); }
+  .form-group input, .form-group select, .form-group textarea {
+    padding: 12px 14px; border: 2px solid var(--border); border-radius: 10px;
+    font-size: 0.95rem; font-family: 'DM Sans', sans-serif;
+    transition: border-color 0.2s; outline: none; color: var(--deep); background: white;
+  }
+  .form-group input:focus, .form-group select:focus { border-color: var(--saffron); }
+  .style-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; }
+  .style-option { display: none; }
+  .style-label {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    padding: 1rem 0.5rem; border: 2px solid var(--border); border-radius: 12px;
+    cursor: pointer; transition: all 0.2s; text-align: center;
+  }
+  .style-label:hover { border-color: var(--saffron); background: #fff3ed; }
+  .style-option:checked + .style-label { border-color: var(--saffron); background: #fff3ed; }
+  .style-emoji { font-size: 1.6rem; }
+  .style-text { font-size: 0.78rem; font-weight: 600; color: var(--deep); }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+  .submit-btn {
+    width: 100%; background: var(--saffron); color: white; border: none;
+    padding: 16px; border-radius: 14px; font-size: 1.05rem; font-weight: 700;
+    cursor: pointer; font-family: 'Syne', sans-serif; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+  }
+  .submit-btn:hover { background: #e55a28; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,107,53,0.3); }
+  .submit-btn.loading { background: #ccc; cursor: not-allowed; transform: none; }
+  .tip-box { background: #e6f9f7; border-left: 4px solid var(--teal); padding: 1rem 1.2rem; border-radius: 0 10px 10px 0; margin-top: 1.5rem; font-size: 0.88rem; color: #0a6b62; }
+  @media (max-width: 600px) {
+    .form-row, .form-row.three { grid-template-columns: 1fr; }
+    .style-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+{% endblock %}
+{% block content %}
+<div class="plan-hero">
+  <h1><i class="fas fa-magic"></i> Plan Your Trip</h1>
+  <p>Tell us where you want to go — we'll handle the rest</p>
+</div>
+<div class="plan-container">
+  <div class="plan-card">
+    <form action="/generate" method="POST" id="planForm">
+
+      <div class="form-section">
+        <div class="form-section-title"><i class="fas fa-map-marker-alt"></i> Destination & Dates</div>
+        <div class="form-row">
+          <div class="form-group" style="grid-column:1/-1;">
+            <label>Where do you want to go? *</label>
+            <input type="text" name="destination" id="destInput" placeholder="e.g. Manali, Goa, Jaipur, Rishikesh, Hampi..." required/>
+          </div>
+        </div>
+        <div class="form-row three">
+          <div class="form-group">
+            <label>Number of Days</label>
+            <select name="days">
+              {% for i in range(1,15) %}<option value="{{ i }}" {% if i==3 %}selected{% endif %}>{{ i }} Day{% if i>1 %}s{% endif %}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>No. of Travelers</label>
+            <select name="travelers">
+              {% for i in range(1,7) %}<option value="{{ i }}">{{ i }} Person{% if i>1 %}s{% endif %}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Total Budget (₹)</label>
+            <input type="number" name="budget" value="8000" min="500" max="200000" step="500"/>
+          </div>
+        </div>
+      </div>
+
+      <hr class="divider"/>
+
+      <div class="form-section">
+        <div class="form-section-title"><i class="fas fa-compass"></i> Travel Style</div>
+        <div class="style-grid">
+          <div>
+            <input type="radio" name="travel_style" value="adventure" id="s1" class="style-option" checked/>
+            <label for="s1" class="style-label"><span class="style-emoji">🧗</span><span class="style-text">Adventure</span></label>
+          </div>
+          <div>
+            <input type="radio" name="travel_style" value="spiritual" id="s2" class="style-option"/>
+            <label for="s2" class="style-label"><span class="style-emoji">🙏</span><span class="style-text">Spiritual</span></label>
+          </div>
+          <div>
+            <input type="radio" name="travel_style" value="nature" id="s3" class="style-option"/>
+            <label for="s3" class="style-label"><span class="style-emoji">🌿</span><span class="style-text">Nature</span></label>
+          </div>
+          <div>
+            <input type="radio" name="travel_style" value="heritage" id="s4" class="style-option"/>
+            <label for="s4" class="style-label"><span class="style-emoji">🏛️</span><span class="style-text">Heritage</span></label>
+          </div>
+          <div>
+            <input type="radio" name="travel_style" value="beach" id="s5" class="style-option"/>
+            <label for="s5" class="style-label"><span class="style-emoji">🏖️</span><span class="style-text">Beach</span></label>
+          </div>
+          <div>
+            <input type="radio" name="travel_style" value="hills" id="s6" class="style-option"/>
+            <label for="s6" class="style-label"><span class="style-emoji">⛰️</span><span class="style-text">Mountains</span></label>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">
+        <i class="fas fa-magic"></i> Generate My Itinerary
+      </button>
+      <div class="tip-box">
+        <strong>💡 Tip:</strong> The more specific your destination, the better your itinerary. Try "Manali" instead of "Himachal Pradesh" for best results.
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+  // Pre-fill from URL
+  const p = new URLSearchParams(window.location.search);
+  if (p.get('destination')) document.getElementById('destInput').value = p.get('destination');
+
+  document.getElementById('planForm').addEventListener('submit', function() {
+    const btn = document.getElementById('submitBtn');
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating your itinerary...';
+    btn.classList.add('loading');
+    btn.disabled = true;
+  });
+</script>
+{% endblock %}

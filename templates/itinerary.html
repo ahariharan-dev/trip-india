@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+{% block title %}{{ itinerary.destination }} Itinerary — TripSaathi{% endblock %}
+{% block head %}
+<style>
+  .itin-hero {
+    background: linear-gradient(135deg, var(--teal), #0a7a6e);
+    padding: 3rem 2rem; color: white; text-align: center;
+  }
+  .itin-hero h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+  .itin-hero .meta { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; margin-top: 1rem; }
+  .meta-item { display: flex; align-items: center; gap: 6px; font-size: 0.9rem; opacity: 0.9; }
+  .itin-container { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+  .itin-grid { display: grid; grid-template-columns: 1fr 340px; gap: 2rem; }
+
+  /* BUDGET CARD */
+  .budget-card { background: white; border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 1.5rem; }
+  .budget-card h3 { font-size: 1rem; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 8px; }
+  .budget-total { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; color: var(--saffron); margin-bottom: 1rem; }
+  .budget-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.88rem; }
+  .budget-item:last-child { border-bottom: none; }
+  .budget-item-label { color: var(--muted); display: flex; align-items: center; gap: 6px; }
+  .budget-item-val { font-weight: 700; color: var(--deep); }
+  .budget-bar { height: 6px; border-radius: 3px; margin-top: 4px; }
+
+  /* WEATHER */
+  .weather-card { background: linear-gradient(135deg, #0f9b8e, #0a7a6e); border-radius: var(--radius); padding: 1.5rem; color: white; margin-bottom: 1.5rem; }
+  .weather-card h3 { font-size: 0.9rem; opacity: 0.8; margin-bottom: 0.8rem; }
+  .weather-main { display: flex; align-items: center; gap: 1rem; }
+  .weather-temp { font-family: 'Syne', sans-serif; font-size: 2.5rem; font-weight: 800; }
+  .weather-desc { font-size: 0.9rem; opacity: 0.85; }
+  .weather-details { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 1rem; }
+  .weather-detail { font-size: 0.8rem; opacity: 0.8; }
+
+  /* TIPS */
+  .tips-card { background: #fff8e1; border-radius: var(--radius); padding: 1.5rem; border: 1px solid #ffc107; margin-bottom: 1.5rem; }
+  .tips-card h3 { font-size: 0.95rem; margin-bottom: 1rem; color: #856404; }
+  .tip-item { font-size: 0.85rem; color: #856404; padding: 6px 0; border-bottom: 1px solid rgba(133,100,4,0.1); display: flex; gap: 8px; }
+  .tip-item:last-child { border-bottom: none; }
+
+  /* DAY CARDS */
+  .day-card { background: white; border-radius: var(--radius); padding: 1.8rem; box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 1.5rem; }
+  .day-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.2rem; }
+  .day-num { background: var(--saffron); color: white; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 800; flex-shrink: 0; }
+  .day-title { font-size: 1.05rem; font-weight: 700; margin-left: 12px; flex: 1; }
+  .day-cost { font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--saffron); background: #fff3ed; padding: 6px 12px; border-radius: 8px; white-space: nowrap; }
+  .time-block { padding: 10px 0; border-bottom: 1px solid var(--border); display: flex; gap: 12px; }
+  .time-block:last-of-type { border-bottom: none; }
+  .time-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); min-width: 70px; padding-top: 2px; }
+  .time-content { font-size: 0.9rem; color: var(--deep); line-height: 1.6; }
+  .day-extras { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-top: 1rem; }
+  .extra-item { background: #f9fafb; border-radius: 10px; padding: 0.8rem; font-size: 0.82rem; }
+  .extra-label { font-weight: 700; color: var(--muted); font-size: 0.72rem; text-transform: uppercase; margin-bottom: 4px; }
+  .extra-val { color: var(--deep); line-height: 1.4; }
+
+  /* ACTIONS */
+  .action-bar { background: white; border-radius: var(--radius); padding: 1.2rem 1.5rem; box-shadow: var(--shadow); border: 1px solid var(--border); display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; margin-bottom: 2rem; }
+  .action-bar span { font-size: 0.85rem; color: var(--muted); flex: 1; }
+
+  /* MAP */
+  .map-card { background: white; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 1.5rem; }
+  .map-card h3 { padding: 1rem 1.2rem; font-size: 0.95rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+  #map { height: 280px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 0.9rem; }
+
+  @media (max-width: 900px) {
+    .itin-grid { grid-template-columns: 1fr; }
+    .day-extras { grid-template-columns: 1fr; }
+  }
+</style>
+{% endblock %}
+{% block content %}
+
+<div class="itin-hero">
+  <h1>🗺️ {{ itinerary.destination }}</h1>
+  <p>Your AI-Generated Budget Itinerary</p>
+  <div class="meta">
+    <div class="meta-item"><i class="fas fa-calendar"></i> {{ itinerary.days }} Days</div>
+      <div class="meta-item"><i class="fas fa-rupee-sign"></i> ₹{{ itinerary.total_budget | format_number }} Budget</div>
+    <div class="meta-item"><i class="fas fa-sun"></i> Best Time: {{ itinerary.best_time_to_visit }}</div>
+    {% if trip_id %}<div class="meta-item"><i class="fas fa-check-circle"></i> Trip Saved!</div>{% endif %}
+  </div>
+</div>
+
+<div class="itin-container">
+  <!-- ACTION BAR -->
+  <div class="action-bar">
+    <span><i class="fas fa-info-circle"></i> Your itinerary is ready! Plan another trip or save this one.</span>
+    <a href="/plan" class="btn btn-outline" style="font-size:0.85rem;padding:8px 16px;"><i class="fas fa-redo"></i> New Trip</a>
+    <button onclick="window.print()" class="btn btn-teal" style="font-size:0.85rem;padding:8px 16px;"><i class="fas fa-print"></i> Print</button>
+    {% if user %}<a href="/dashboard" class="btn btn-primary" style="font-size:0.85rem;padding:8px 16px;"><i class="fas fa-bookmark"></i> My Trips</a>{% endif %}
+  </div>
+
+  <div class="itin-grid">
+    <!-- LEFT: DAY BY DAY -->
+    <div>
+      {% for day in itinerary.itinerary %}
+      <div class="day-card">
+        <div class="day-header">
+          <div class="day-num">{{ day.day }}</div>
+          <div class="day-title">{{ day.title }}</div>
+          <div class="day-cost">₹{{ day.estimated_cost | format_number }}</div>
+        </div>
+        <div class="time-block">
+          <div class="time-label">🌅 Morning</div>
+          <div class="time-content">{{ day.morning }}</div>
+        </div>
+        <div class="time-block">
+          <div class="time-label">☀️ Afternoon</div>
+          <div class="time-content">{{ day.afternoon }}</div>
+        </div>
+        <div class="time-block">
+          <div class="time-label">🌙 Evening</div>
+          <div class="time-content">{{ day.evening }}</div>
+        </div>
+        <div class="day-extras">
+          <div class="extra-item">
+            <div class="extra-label">🏨 Stay</div>
+            <div class="extra-val">{{ day.accommodation }}</div>
+          </div>
+          <div class="extra-item">
+            <div class="extra-label">🍛 Food</div>
+            <div class="extra-val">{{ day.food }}</div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- RIGHT: SIDEBAR -->
+    <div>
+      <!-- WEATHER -->
+      {% if weather %}
+      <div class="weather-card">
+        <h3><i class="fas fa-cloud-sun"></i> Current Weather in {{ itinerary.destination }}</h3>
+        <div class="weather-main">
+          <img src="https://openweathermap.org/img/wn/{{ weather.icon }}@2x.png" width="60" alt="weather" onerror="this.style.display='none'"/>
+          <div>
+            <div class="weather-temp">{{ weather.temp }}°C</div>
+            <div class="weather-desc">{{ weather.description }}</div>
+          </div>
+        </div>
+        <div class="weather-details">
+          <div class="weather-detail"><i class="fas fa-thermometer-half"></i> Feels like {{ weather.feels_like }}°C</div>
+          <div class="weather-detail"><i class="fas fa-tint"></i> Humidity {{ weather.humidity }}%</div>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- BUDGET BREAKDOWN -->
+      <div class="budget-card">
+        <h3><i class="fas fa-wallet" style="color:var(--saffron)"></i> Budget Breakdown</h3>
+        <div class="budget-total">₹{{ itinerary.total_budget | format_number }}</div>
+        {% set colors = ['#FF6B35','#0f9b8e','#f7c948','#10b981','#6366f1'] %}
+        {% set labels = [('🏨','Accommodation','accommodation'),('🍛','Food','food'),('🚂','Transport','transport'),('🎭','Activities','activities'),('💊','Miscellaneous','miscellaneous')] %}
+        {% for emoji, label, key in labels %}
+        {% set val = itinerary.budget_breakdown[key] %}
+        {% set pct = ((val / itinerary.total_budget) * 100)|round|int %}
+        <div class="budget-item">
+          <div class="budget-item-label">{{ emoji }} {{ label }}</div>
+          <div class="budget-item-val">₹{{ val | format_number }}</div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- MAP -->
+      <div class="map-card">
+        <h3><i class="fas fa-map-marked-alt" style="color:var(--teal)"></i> Location Map</h3>
+        <div id="map"></div>
+      </div>
+
+      <!-- TIPS -->
+      {% if itinerary.tips %}
+      <div class="tips-card">
+        <h3><i class="fas fa-lightbulb"></i> Budget Travel Tips</h3>
+        {% for tip in itinerary.tips %}
+        <div class="tip-item"><span>💡</span><span>{{ tip }}</span></div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <!-- PLAN ANOTHER -->
+      <div style="background:var(--deep);border-radius:var(--radius);padding:1.5rem;text-align:center;">
+        <h3 style="color:white;margin-bottom:0.5rem;font-size:1rem;">Plan Another Trip?</h3>
+        <p style="color:rgba(255,255,255,0.6);font-size:0.85rem;margin-bottom:1rem;">Explore more of India with TripSaathi</p>
+        <a href="/plan" class="btn btn-primary" style="width:100%;justify-content:center;"><i class="fas fa-magic"></i> New Itinerary</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  // Free OpenStreetMap — no API key needed!
+  const destination = {{ itinerary.destination | tojson }};
+
+  fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(`${destination},India`)}&format=json&limit=1`)
+    .then(r => r.json())
+    .then(data => {
+      if (data.length > 0) {
+        const lat = parseFloat(data[0].lat);
+        const lon = parseFloat(data[0].lon);
+        const map = L.map('map').setView([lat, lon], 12);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap'
+        }).addTo(map);
+        L.marker([lat, lon])
+          .addTo(map)
+          .bindPopup(`<b>${destination}</b>`)
+          .openPopup();
+      }
+    });
+</script>
+{% endblock %}

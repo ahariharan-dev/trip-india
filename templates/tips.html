@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Budget Travel Tips — TripSaathi{% endblock %}
+{% block head %}
+<style>
+  .tips-hero { background: linear-gradient(135deg, var(--gold), #e6a800); padding: 3rem 2rem; text-align: center; }
+  .tips-hero h1 { color: var(--deep); font-size: 2.2rem; }
+  .tips-hero p { color: rgba(0,0,0,0.6); }
+  .tips-container { max-width: 900px; margin: 2rem auto; padding: 0 2rem 4rem; }
+  .tips-section { background: white; border-radius: var(--radius); padding: 2rem; border: 1px solid var(--border); margin-bottom: 1.5rem; }
+  .tips-section h2 { font-size: 1.15rem; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 10px; }
+  .tip-list { list-style: none; }
+  .tip-list li { padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; line-height: 1.6; display: flex; gap: 10px; }
+  .tip-list li:last-child { border-bottom: none; }
+  .tip-list li::before { content: "✅"; flex-shrink: 0; }
+</style>
+{% endblock %}
+{% block content %}
+<div class="tips-hero">
+  <h1>💡 Budget Travel Tips</h1>
+  <p>Save more, explore more across India</p>
+</div>
+<div class="tips-container">
+  <div class="tips-section">
+    <h2>🚂 Transport Tips</h2>
+    <ul class="tip-list">
+      <li>Book train tickets 60-120 days in advance on IRCTC for best availability and prices</li>
+      <li>Use Sleeper Class (SL) for short journeys and 3AC for overnight trips — much cheaper than flights</li>
+      <li>Red Bus and AbhiBus offer discounted sleeper buses for intercity travel</li>
+      <li>Within cities, use local buses and metro instead of autos/cabs to save ₹100-200/day</li>
+      <li>Rent a bicycle or scooter in tourist towns like Hampi and Pushkar for ₹100-200/day</li>
+    </ul>
+  </div>
+  <div class="tips-section">
+    <h2>🏨 Accommodation Tips</h2>
+    <ul class="tip-list">
+      <li>Stay in hostels — dorm beds start at ₹200-400/night in most cities</li>
+      <li>Dharamshalas near temples offer free or very cheap stays (₹50-100) in pilgrimage towns</li>
+      <li>Book OYO or Treebo rooms 3-7 days in advance for 30-50% discounts</li>
+      <li>Couchsurfing is free and you get local insights — great for solo travelers</li>
+      <li>Airbnb homestays are often cheaper than hotels and include kitchen access</li>
+    </ul>
+  </div>
+  <div class="tips-section">
+    <h2>🍛 Food Tips</h2>
+    <ul class="tip-list">
+      <li>Eat at dhabas and local thali restaurants — ₹60-120 for a complete meal</li>
+      <li>Street food is your best friend — samosas, vada pav, chai cost ₹10-30 each</li>
+      <li>Avoid restaurants near tourist spots — they charge 3-5x more</li>
+      <li>Carry a water bottle and refill at filtered water stations to avoid buying bottles</li>
+      <li>Cook your own breakfast in hostels with kitchen facilities to save ₹100-150/day</li>
+    </ul>
+  </div>
+  <div class="tips-section">
+    <h2>🎭 Activities Tips</h2>
+    <ul class="tip-list">
+      <li>Most temples, ghats, beaches and public parks are free to enter</li>
+      <li>Get an ASI annual pass for ₹1500 — gives free entry to 100+ monuments including Taj Mahal</li>
+      <li>Student ID cards give 50-75% discount at most government monuments</li>
+      <li>Sunrise visits to popular spots are free and less crowded than paid evening events</li>
+      <li>Join free walking tours in cities like Delhi, Mumbai and Jaipur run by volunteers</li>
+    </ul>
+  </div>
+  <div class="tips-section">
+    <h2>📱 Apps Every Budget Traveler Needs</h2>
+    <ul class="tip-list">
+      <li>IRCTC Rail Connect — book train tickets easily</li>
+      <li>RedBus — compare and book bus tickets</li>
+      <li>OYO / MakeMyTrip — find budget hotels</li>
+      <li>Google Maps — offline maps, no data needed</li>
+      <li>UPI / Google Pay — cashless payments everywhere</li>
+    </ul>
+  </div>
+  <div style="text-align:center;margin-top:2rem;">
+    <a href="/plan" class="btn btn-primary" style="padding:14px 28px;font-size:1rem;"><i class="fas fa-magic"></i> Plan Your Budget Trip Now</a>
+  </div>
+</div>
+{% endblock %}
