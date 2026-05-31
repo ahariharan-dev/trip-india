@@ -1,4 +1,4 @@
-# 🗺️ TripSaathi — AI-Powered India Travel Planner
+# 🗺️ Trip India — AI-Powered India Travel Planner
 
 > Generate day-by-day India travel itineraries with budget breakdown, weather & local tips — powered by Groq AI ⚡
 
